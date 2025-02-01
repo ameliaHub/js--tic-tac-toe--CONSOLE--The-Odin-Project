@@ -77,27 +77,85 @@ const gameController = (function(){
         
     };
 
-    function getCurrentPlayer(){
-        return currentPlayer;
-    }
 
-    return{ playRound, getCurrentPlayer};
+    function checkWinner(){
+        const board = gameBoard.getBoard();
+
+        // Comprobar filas
+        for (let i = 0; i < 3; i++) {
+            if (board[i][0] === board[i][1] && board[i][1] === board[i][2] && board[i][0] !== "-") {
+                return board[i][0]; // Retorna "X" o "O" como el ganador
+            }
+        }
+
+        // Comprobar columnas
+        for (let j = 0; j < 3; j++) {
+            if (board[0][j] === board[1][j] && board[1][j] === board[2][j] && board[0][j] !== "-") {
+                return board[0][j]; // Retorna "X" o "O" como el ganador
+            }
+        }
+
+        // Comprobar diagonales
+        switch (true) {
+            case (board[0][0] === board[1][1] && board[1][1] === board[2][2] && board[0][0] !== "-"):
+                return board[0][0]; // Retorna "X" o "O" como el ganador
+            case (board[0][2] === board[1][1] && board[1][1] === board[2][0] && board[0][2] !== "-"):
+                return board[0][2]; // Retorna "X" o "O" como el ganador
+        }
+
+        // Comprobar empate
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (board[i][j] === "-") {
+                    return null; // El juego sigue
+                }
+            }
+        }
+
+        return "empate"; // Empate si no hay casillas vacías
+    }
+        
+    
+
+
+
+//SI EL JUEGO NECESITASE INPUTS: (al hacerlo con UI los gestionamos diferente)
+function startGame() {
+    let gameActive = true; 
+
+    while(gameActive) {
+        playRound(); 
+        
+        //verificar fin del juego
+        switch(checkWinner()){
+            case "X":
+                console.log("¡El ganador es el jugador X!");
+                gameActive = false;
+                break;
+            case "O":
+                console.log("¡El ganador es el jugador O!");
+                gameActive = false;
+                break;
+            case "empate":
+                console.log("¡Es un empate!");
+                gameActive = false;
+                break;
+            default:
+                // El juego continúa
+                break;
+        }
+         
+    }
+}
+
+
+    return{ startGame};
 
 
 })();
 
 
-//SI EL JUEGO NECESITASE INPUTS: (al hacerlo con UI los gestionamos diferente)
-// Este es un ejemplo de cómo podrías organizar un ciclo simple para manejar los turnos.
-/*function startGame() {
-    let gameActive = true; // Este es un estado que puede cambiar cuando se detecte un ganador.
+gameController.startGame();
 
-    while(gameActive) {
-        gameController.playRound();  // Se juega un turno
-        // Aquí puedes agregar condiciones para verificar si el juego ha terminado (por ejemplo, verificar si hay un ganador).
-        // Si el juego ha terminado, cambia gameActive a false para finalizar el bucle.
-    }
-}
-*/
 //startGame();
 
